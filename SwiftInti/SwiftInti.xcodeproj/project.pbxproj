@@ -19,6 +19,7 @@
 		EAE3437A2B4C3D2000D0B77A /* Astronaut.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAE343792B4C3D2000D0B77A /* Astronaut.swift */; };
 		EAE3437D2B4C3D9E00D0B77A /* Bundle-Decodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAE3437C2B4C3D9E00D0B77A /* Bundle-Decodable.swift */; };
 		EAE3437F2B4C3FCD00D0B77A /* Mission.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAE3437E2B4C3FCD00D0B77A /* Mission.swift */; };
+		EAE343812B4C4E8200D0B77A /* Color-Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAE343802B4C4E8200D0B77A /* Color-Theme.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -54,6 +55,7 @@
 		EAE343792B4C3D2000D0B77A /* Astronaut.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Astronaut.swift; sourceTree = "<group>"; };
 		EAE3437C2B4C3D9E00D0B77A /* Bundle-Decodable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Bundle-Decodable.swift"; sourceTree = "<group>"; };
 		EAE3437E2B4C3FCD00D0B77A /* Mission.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mission.swift; sourceTree = "<group>"; };
+		EAE343802B4C4E8200D0B77A /* Color-Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color-Theme.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -162,6 +164,7 @@
 			isa = PBXGroup;
 			children = (
 				EAE3437C2B4C3D9E00D0B77A /* Bundle-Decodable.swift */,
+				EAE343802B4C4E8200D0B77A /* Color-Theme.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -299,6 +302,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				EAE3437A2B4C3D2000D0B77A /* Astronaut.swift in Sources */,
+				EAE343812B4C4E8200D0B77A /* Color-Theme.swift in Sources */,
 				EA05CBAF2B44AD5B00F56F77 /* ContentView.swift in Sources */,
 				EA05CBAD2B44AD5B00F56F77 /* SwiftIntiApp.swift in Sources */,
 				EAE3437F2B4C3FCD00D0B77A /* Mission.swift in Sources */,
