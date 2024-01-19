@@ -7,10 +7,50 @@
 
 import SwiftUI
 
+//View modifier para el corner radious
+struct CustomRadius: ViewModifier {
+    let oneCorner: Bool
+    
+    func body(content: Content) -> some View {
+        if oneCorner {
+            content
+                .clipShape(
+                    .rect(topLeadingRadius: .zero,
+                                           bottomLeadingRadius: .zero,
+                                           bottomTrailingRadius: .zero,
+                                           topTrailingRadius: 20)
+                    )
+                .overlay(
+                        UnevenRoundedRectangle(topLeadingRadius: .zero,
+                                               bottomLeadingRadius: .zero,
+                                               bottomTrailingRadius: .zero,
+                                               topTrailingRadius: 20)
+                        .stroke(.white)
+                    )
+        } else {
+            content
+                .clipShape(
+                    RoundedRectangle(cornerRadius: 20)
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 20)
+                        .stroke(.white)
+                )
+        }
+    }
+}
+
+extension View {
+    func customRadius(status: Bool) -> some View {
+        modifier(CustomRadius(oneCorner: status))
+    }
+}
+
 struct ContentView: View {
     // TODO: Change this to another part
     let astronauts: [String: Astronaut] = Bundle.main.decode("astronauts.json")
     let missions: [Mission] = Bundle.main.decode("missions.json")
+    let cellCornerRadius: CGFloat = 20.0
     
     let columns = [
         GridItem(.adaptive(minimum: 150))
@@ -57,14 +97,26 @@ struct ContentView: View {
                             // celda de tamaño completo con esta misma custom cell.
                             // Color diferente a la derecha
                             VStack {
-                                CustomCell(imageName: missions[index].image, displayName: missions[index].displayName, launchDate: missions[index].formattedLaunchDate)
+                                //Celda usando Custom Modifier para el radio
+                                CustomCell(imageName: missions[index].image,
+                                           displayName: missions[index].displayName,
+                                           launchDate: missions[index].formattedLaunchDate)
                                     .background(selectedSegment == .first ? cellBackgroundColor(index: index) : .darkBackground)
-                                    .clipShape(RoundedRectangle(cornerRadius: 10))
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: 10)
-                                            .stroke(.lightBackground)
-                                    )
+                                    .customRadius(status: selectedSegment == .first && index % 2 != 0)
                                 
+                                
+                                //Celda usando funcs para hacer el set up del corner radius
+                                CustomCell(imageName: missions[index].image,
+                                           displayName: missions[index].displayName + "Copy",
+                                           launchDate: missions[index].formattedLaunchDate)
+                                .background(.blue)
+                                .clipShape(
+                                    cellClipShapeForm(index: index, segment: selectedSegment)
+                                )
+                                .overlay(
+                                    cellClipShapeForm(index: index, segment: selectedSegment)
+                                        .stroke(.white)
+                                )
                             }
                         }
                     }
@@ -75,6 +127,24 @@ struct ContentView: View {
             .background(.darkBackground)
             .preferredColorScheme(.dark) // TODO: Workaround for the title, always on dark mode.
         }
+    }
+    
+    func cellClipShapeForm(index: Int, segment: Segments) -> UnevenRoundedRectangle {
+        let defaultCornerRadius = UnevenRoundedRectangle(topLeadingRadius: cellCornerRadius,
+                                                         bottomLeadingRadius: cellCornerRadius,
+                                                         bottomTrailingRadius: cellCornerRadius,
+                                                         topTrailingRadius: cellCornerRadius)
+        guard segment == .first else {
+            return defaultCornerRadius
+        }
+        
+        let customCornerRadius = index % 2 == 0 ? defaultCornerRadius :
+                                                  UnevenRoundedRectangle(topLeadingRadius: .zero,
+                                                                         bottomLeadingRadius: .zero,
+                                                                         bottomTrailingRadius: .zero,
+                                                                         topTrailingRadius: cellCornerRadius)
+        
+        return customCornerRadius
     }
     
     func cellBackgroundColor(index: Int) -> Color {
