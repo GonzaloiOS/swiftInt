@@ -7,45 +7,6 @@
 
 import SwiftUI
 
-//View modifier para el corner radious
-struct CustomRadius: ViewModifier {
-    let oneCorner: Bool
-    
-    func body(content: Content) -> some View {
-        if oneCorner {
-            content
-                .clipShape(
-                    .rect(topLeadingRadius: .zero,
-                                           bottomLeadingRadius: .zero,
-                                           bottomTrailingRadius: .zero,
-                                           topTrailingRadius: 20)
-                    )
-                .overlay(
-                        UnevenRoundedRectangle(topLeadingRadius: .zero,
-                                               bottomLeadingRadius: .zero,
-                                               bottomTrailingRadius: .zero,
-                                               topTrailingRadius: 20)
-                        .stroke(.white)
-                    )
-        } else {
-            content
-                .clipShape(
-                    RoundedRectangle(cornerRadius: 20)
-                )
-                .overlay(
-                    RoundedRectangle(cornerRadius: 20)
-                        .stroke(.white)
-                )
-        }
-    }
-}
-
-extension View {
-    func customRadius(status: Bool) -> some View {
-        modifier(CustomRadius(oneCorner: status))
-    }
-}
-
 struct ContentView: View {
     // TODO: Change this to another part
     let astronauts: [String: Astronaut] = Bundle.main.decode("astronauts.json")
@@ -76,7 +37,7 @@ struct ContentView: View {
     @State private var selectedSegment: Segments = .first
     
     var body: some View {
-        NavigationView {
+        NavigationStack {
             ScrollView {
                 
                 Picker("", selection: $selectedSegment) {
@@ -91,6 +52,9 @@ struct ContentView: View {
                 LazyVGrid(columns: setupColumns()) {
                     ForEach(0..<missions.count, id: \.self) { index in
                         
+                        // Sacar de la view la lógica de la navegación. Hacer una clase, Coordinator/Router que se encargue de la navegación (qué mostrar y cómo mostrarlo). Usando The Composable Architecture.
+                        // Cómo extraer lógica para push y present (que no sea cambio drástico).
+                        
                         NavigationLink { //The navigation here
                             MissionView(mission: missions[index], astronauts: astronauts)
                         } label: {
@@ -101,21 +65,11 @@ struct ContentView: View {
                                 CustomCell(imageName: missions[index].image,
                                            displayName: missions[index].displayName,
                                            launchDate: missions[index].formattedLaunchDate)
-                                    .background(selectedSegment == .first ? cellBackgroundColor(index: index) : .darkBackground)
-                                    .customRadius(status: selectedSegment == .first && index % 2 != 0)
-                                
-                                
-                                //Celda usando funcs para hacer el set up del corner radius
-                                CustomCell(imageName: missions[index].image,
-                                           displayName: missions[index].displayName + "Copy",
-                                           launchDate: missions[index].formattedLaunchDate)
-                                .background(.blue)
-                                .clipShape(
-                                    cellClipShapeForm(index: index, segment: selectedSegment)
-                                )
+                                .background(selectedSegment == .first ? cellBackgroundColor(index: index) : .darkBackground)
+                                .cornerRadius(20, corners: index % 2 == 0 ? [.allCorners] : [.topRight])
                                 .overlay(
-                                    cellClipShapeForm(index: index, segment: selectedSegment)
-                                        .stroke(.white)
+                                         cellClipShapeForm(index: index, segment: selectedSegment)
+                                                          .stroke(.white)
                                 )
                             }
                         }
@@ -130,22 +84,22 @@ struct ContentView: View {
     }
     
     func cellClipShapeForm(index: Int, segment: Segments) -> UnevenRoundedRectangle {
-        let defaultCornerRadius = UnevenRoundedRectangle(topLeadingRadius: cellCornerRadius,
-                                                         bottomLeadingRadius: cellCornerRadius,
-                                                         bottomTrailingRadius: cellCornerRadius,
-                                                         topTrailingRadius: cellCornerRadius)
-        guard segment == .first else {
-            return defaultCornerRadius
+            let defaultCornerRadius = UnevenRoundedRectangle(topLeadingRadius: cellCornerRadius,
+                                                             bottomLeadingRadius: cellCornerRadius,
+                                                             bottomTrailingRadius: cellCornerRadius,
+                                                             topTrailingRadius: cellCornerRadius)
+            guard segment == .first else {
+                return defaultCornerRadius
+            }
+            
+            let customCornerRadius = index % 2 == 0 ? defaultCornerRadius :
+                                                      UnevenRoundedRectangle(topLeadingRadius: .zero,
+                                                                             bottomLeadingRadius: .zero,
+                                                                             bottomTrailingRadius: .zero,
+                                                                             topTrailingRadius: cellCornerRadius)
+            
+            return customCornerRadius
         }
-        
-        let customCornerRadius = index % 2 == 0 ? defaultCornerRadius :
-                                                  UnevenRoundedRectangle(topLeadingRadius: .zero,
-                                                                         bottomLeadingRadius: .zero,
-                                                                         bottomTrailingRadius: .zero,
-                                                                         topTrailingRadius: cellCornerRadius)
-        
-        return customCornerRadius
-    }
     
     func cellBackgroundColor(index: Int) -> Color {
         let status = index % 2 == 0
